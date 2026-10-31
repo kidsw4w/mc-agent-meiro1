@@ -51,6 +51,7 @@ namespace meiro {
     }
 
     // ▶ を おしたら、いま いる しまの スタートに エージェントを よぶ
+    player.say("めいろ プログラム ver.5")
     let here = Math.round(player.position().toWorld().getValue(Axis.X) / 40)
     if (here < 0) here = 0
     if (here > START_X.length - 1) here = START_X.length - 1
