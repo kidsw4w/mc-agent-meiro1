@@ -5,7 +5,8 @@
     "dependencies": {},
     "files": [
         "README.md",
-        "meiro.md"
+        "meiro.md",
+        "meiro7.md"
     ],
     "supportedTargets": [
         "minecraft"
