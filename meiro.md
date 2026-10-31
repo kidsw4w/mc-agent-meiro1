@@ -33,7 +33,7 @@ for (let index = 0; index < 4; index++) {
 //% color="#2a9d4a" weight=200 block="めいろ"
 namespace meiro {
     let handler: () => void = null
-    const LAMP_X = [-1, 39, 79, 119, 159]   // スタートの となりの ランプ (y=101, z=0)
+    const LAMP_X = [0, 40, 80, 120, 160]   // スタートの てまえの ランプ (y=101, z=1)
     const START_X = [0, 40, 80, 120, 160]   // スタート (y=101, z=0) きた むき
     const LIT_LAMP = 124                    // lit_redstone_lamp
 
@@ -47,7 +47,7 @@ namespace meiro {
 
     loops.forever(function () {
         for (let i = 0; i < LAMP_X.length; i++) {
-            const lamp = world(LAMP_X[i], 101, 0)
+            const lamp = world(LAMP_X[i], 101, 1)
             if (blocks.testForBlock(LIT_LAMP, lamp)) {
                 // ボタンが もどるまで まつ
                 while (blocks.testForBlock(LIT_LAMP, lamp)) loops.pause(100)
