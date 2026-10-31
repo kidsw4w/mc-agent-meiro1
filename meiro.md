@@ -33,9 +33,9 @@ for (let index = 0; index < 4; index++) {
 //% color="#2a9d4a" weight=200 block="めいろ"
 namespace meiro {
     let handler: () => void = null
-    const LAMP_X = [0, 40, 80, 120, 160]   // スタートの てまえの ゆかに かくした ランプ (y=100, z=1)
-    const START_X = [0, 40, 80, 120, 160]   // スタート (y=101, z=0) きた むき
-    const LIT_LAMP = 124                    // lit_redstone_lamp
+    // スタート (y=101, z=0) は きた むき。ボタンを おすと、ワールドが
+    // しまの なか (y=98, z=1) に ダイヤモンドブロックの あいずを おく
+    const START_X = [0, 40, 80, 120, 160]
 
     /**
      * めいろの ボタンを おしたときに うごく
@@ -46,11 +46,10 @@ namespace meiro {
     }
 
     loops.forever(function () {
-        for (let i = 0; i < LAMP_X.length; i++) {
-            const lamp = world(LAMP_X[i], 100, 1)
-            if (blocks.testForBlock(LIT_LAMP, lamp)) {
-                // ボタンが もどるまで まつ
-                while (blocks.testForBlock(LIT_LAMP, lamp)) loops.pause(100)
+        for (let i = 0; i < START_X.length; i++) {
+            const signal = world(START_X[i], 98, 1)
+            if (blocks.testForBlock(DIAMOND_BLOCK, signal)) {
+                blocks.place(DIRT, signal)          // あいずを けす
                 agent.teleport(world(START_X[i], 101, 0), CompassDirection.North)
                 if (handler) handler()
             }
