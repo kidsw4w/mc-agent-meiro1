@@ -1,12 +1,13 @@
 {
     "name": "mc-agent-meiro1",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "description": "めいろで エージェント (Kid's Work)",
     "dependencies": {},
     "files": [
         "README.md",
         "meiro.md",
-        "meiro7.md"
+        "meiro7.md",
+        "meiro8.md"
     ],
     "supportedTargets": [
         "minecraft"
