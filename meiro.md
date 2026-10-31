@@ -32,46 +32,40 @@ for (let index = 0; index < 4; index++) {
  */
 //% color="#2a9d4a" weight=200 block="めいろ"
 namespace meiro {
-    let handler: () => void = null
-    // スタート (y=101, z=0) は きた むき。しまの なか (y=98) に ワールドが あいずを おく
-    //   z=1 の ダイヤモンド … ボタン（スタートに もどして プログラムを うごかす）
-    //   z=2 の エメラルド   … スタートに もどすだけ（ステージ かいし・あんないにん）
-    const START_X = [0, 40, 80, 120, 160]
-
     /**
      * めいろの ボタンを おしたときに うごく
+     * （プログラムの じゅんばんに えいきょう されないよう、ぜんぶ この なかで じゅんびする）
      */
     //% block="ボタンを おしたら"
-    export function onButton(h: () => void) {
-        handler = h
-    }
+    export function onButton(handler: () => void) {
+        // スタート (y=101, z=0) は きた むき。しまの なか (y=98) に ワールドが あいずを おく
+        //   z=1 の ダイヤモンド … ボタン（スタートに もどして プログラムを うごかす）
+        //   z=2 の エメラルド   … スタートに もどすだけ（ステージ かいし・あんないにん）
+        const xs = [0, 40, 80, 120, 160]
+        player.say("めいろ プログラム ver.6")
 
-    function toStart(i: number) {
-        agent.teleport(world(START_X[i], 101, 0), CompassDirection.North)
-    }
+        // ▶ を おしたら、いま いる しまの スタートに エージェントを よぶ
+        let here = Math.round(player.position().toWorld().getValue(Axis.X) / 40)
+        if (here < 0) here = 0
+        if (here > 4) here = 4
+        agent.teleport(world(xs[here], 101, 0), CompassDirection.North)
 
-    // ▶ を おしたら、いま いる しまの スタートに エージェントを よぶ
-    player.say("めいろ プログラム ver.5")
-    let here = Math.round(player.position().toWorld().getValue(Axis.X) / 40)
-    if (here < 0) here = 0
-    if (here > START_X.length - 1) here = START_X.length - 1
-    toStart(here)
-
-    loops.forever(function () {
-        for (let i = 0; i < START_X.length; i++) {
-            const reset = world(START_X[i], 98, 2)
-            if (blocks.testForBlock(EMERALD_BLOCK, reset)) {
-                blocks.place(DIRT, reset)
-                toStart(i)
+        loops.forever(function () {
+            for (let i = 0; i < xs.length; i++) {
+                const reset = world(xs[i], 98, 2)
+                if (blocks.testForBlock(EMERALD_BLOCK, reset)) {
+                    blocks.place(DIRT, reset)
+                    agent.teleport(world(xs[i], 101, 0), CompassDirection.North)
+                }
+                const go = world(xs[i], 98, 1)
+                if (blocks.testForBlock(DIAMOND_BLOCK, go)) {
+                    blocks.place(DIRT, go)
+                    agent.teleport(world(xs[i], 101, 0), CompassDirection.North)
+                    handler()
+                }
             }
-            const go = world(START_X[i], 98, 1)
-            if (blocks.testForBlock(DIAMOND_BLOCK, go)) {
-                blocks.place(DIRT, go)
-                toStart(i)
-                if (handler) handler()
-            }
-        }
-        loops.pause(100)
-    })
+            loops.pause(100)
+        })
+    }
 }
 ```
