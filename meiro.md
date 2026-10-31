@@ -33,8 +33,9 @@ for (let index = 0; index < 4; index++) {
 //% color="#2a9d4a" weight=200 block="めいろ"
 namespace meiro {
     let handler: () => void = null
-    // スタート (y=101, z=0) は きた むき。ボタンを おすと、ワールドが
-    // しまの なか (y=98, z=1) に ダイヤモンドブロックの あいずを おく
+    // スタート (y=101, z=0) は きた むき。しまの なか (y=98) に ワールドが あいずを おく
+    //   z=1 の ダイヤモンド … ボタン（スタートに もどして プログラムを うごかす）
+    //   z=2 の エメラルド   … スタートに もどすだけ（ステージ かいし・あんないにん）
     const START_X = [0, 40, 80, 120, 160]
 
     /**
@@ -45,12 +46,27 @@ namespace meiro {
         handler = h
     }
 
+    function toStart(i: number) {
+        agent.teleport(world(START_X[i], 101, 0), CompassDirection.North)
+    }
+
+    // ▶ を おしたら、いま いる しまの スタートに エージェントを よぶ
+    let here = Math.round(player.position().toWorld().getValue(Axis.X) / 40)
+    if (here < 0) here = 0
+    if (here > START_X.length - 1) here = START_X.length - 1
+    toStart(here)
+
     loops.forever(function () {
         for (let i = 0; i < START_X.length; i++) {
-            const signal = world(START_X[i], 98, 1)
-            if (blocks.testForBlock(DIAMOND_BLOCK, signal)) {
-                blocks.place(DIRT, signal)          // あいずを けす
-                agent.teleport(world(START_X[i], 101, 0), CompassDirection.North)
+            const reset = world(START_X[i], 98, 2)
+            if (blocks.testForBlock(EMERALD_BLOCK, reset)) {
+                blocks.place(DIRT, reset)
+                toStart(i)
+            }
+            const go = world(START_X[i], 98, 1)
+            if (blocks.testForBlock(DIAMOND_BLOCK, go)) {
+                blocks.place(DIRT, go)
+                toStart(i)
                 if (handler) handler()
             }
         }
