@@ -1,0 +1,121 @@
+# ステージ5 くりかえしを つかおう
+
+### @unifiedToolbox true
+### @explicitHints true
+
+## ブロックを ならべよう
+
+「**ボタンを おしたら**」の なかに、エージェントの ブロックを ならべよう。
+
+かんせいしたら、▶ を おしてから、スタートの まえの **スイッチ** を **みぎクリック** しよう。スタートするよ！
+
+**2かいだて** の めいろだよ。1かいめと 2かいめは おなじ かたち。
+**くりかえし** の ブロックを つかうと みじかく かけるよ。
+
+## ヒント 1
+
+まずは……
+
+**うえに 5 ブロック いどう** して、**まえに 3 ブロック いどう** を **2かい くりかえし**、**みぎを むく** よ。
+
+```blocks
+meiro.onButton(function () {
+    agent.move(SixDirection.Up, 5)
+    for (let index = 0; index < 2; index++) {
+        agent.move(SixDirection.Forward, 3)
+    }
+    agent.turn(TurnDirection.Right)
+})
+```
+
+## ヒント 2
+
+1かいめの さいごまで……
+
+1. うえに **5** ブロック いどう
+2. まえに **3** ブロック いどう を **2かい** くりかえす
+3. **みぎ** を むく
+4. まえに **3** ブロック いどう
+5. **みぎ** を むく
+6. まえに **3** ブロック いどう（とちゅうで かんあつばん）
+7. **みぎ** を むく
+8. まえに **3** ブロック いどう を **2かい** くりかえす
+
+ここまでで 1かいめ は おわり！
+2かいめは どうすれば いいかな？ **くりかえし** を つかって じぶんで かんがえてみよう！
+
+```blocks
+meiro.onButton(function () {
+    agent.move(SixDirection.Up, 5)
+    for (let index = 0; index < 2; index++) {
+        agent.move(SixDirection.Forward, 3)
+    }
+    agent.turn(TurnDirection.Right)
+    agent.move(SixDirection.Forward, 3)
+    agent.turn(TurnDirection.Right)
+    agent.move(SixDirection.Forward, 3)
+    agent.turn(TurnDirection.Right)
+    for (let index = 0; index < 2; index++) {
+        agent.move(SixDirection.Forward, 3)
+    }
+})
+```
+
+```template
+meiro.onButton(function () {
+})
+```
+
+```ghost
+agent.move(SixDirection.Forward, 1)
+agent.move(SixDirection.Up, 1)
+agent.turn(TurnDirection.Right)
+agent.turn(TurnDirection.Left)
+for (let index = 0; index < 4; index++) {
+}
+```
+
+```customts
+/**
+ * めいろ ようの ブロック（さいしょうげん）
+ * ざひょう・いどう・メッセージは ぜんぶ ワールドがわ（kw/mc_* の ファンクション）で おこなう。
+ * ワールドは あいずを ここに おく：
+ *   0 97 0 ダイヤモンド … ボタン（エージェントは ワールドが スタートへ もどしずみ）
+ *   0 97 1 エメラルド   … スタートへ もどした あいず（むきだけ なおす）
+ */
+//% color="#2a9d4a" weight=200 block="めいろ"
+namespace meiro {
+    function faceNorth() {
+        agent.teleport(agent.getPosition(), CompassDirection.North)
+    }
+
+    /**
+     * めいろの ボタンを おしたときに うごく
+     */
+    //% block="ボタンを おしたら"
+    export function onButton(handler: () => void) {
+        player.execute("function kw/mc_ready")
+        faceNorth()
+        let n = 0
+        loops.forever(function () {
+            const reset = world(0, 97, 1)
+            if (blocks.testForBlock(EMERALD_BLOCK, reset)) {
+                blocks.place(STONE, reset)
+                faceNorth()
+                player.execute("function kw/mc_reset")
+            }
+            const go = world(0, 97, 0)
+            if (blocks.testForBlock(DIAMOND_BLOCK, go)) {
+                blocks.place(STONE, go)
+                faceNorth()
+                player.execute("function kw/mc_go")
+                handler()
+                player.execute("function kw/mc_done")
+            }
+            n++
+            if (n % 100 == 0) player.execute("function kw/mc_beat")
+            loops.pause(100)
+        })
+    }
+}
+```
