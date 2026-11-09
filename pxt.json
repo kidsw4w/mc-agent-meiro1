@@ -1,6 +1,6 @@
 {
     "name": "mc-agent-meiro1",
-    "version": "0.12.2",
+    "version": "0.12.3",
     "description": "めいろで エージェント (Kid's Work)",
     "dependencies": {},
     "files": [
@@ -53,6 +53,11 @@
         "meiro261109cs3.md",
         "meiro261109cs4.md",
         "meiro261109cs5.md",
+        "meiro261110as1.md",
+        "meiro261110as2.md",
+        "meiro261110as3.md",
+        "meiro261110as4.md",
+        "meiro261110as5.md",
         "meiro9s1.md",
         "meiro9s2.md",
         "meiro9s3.md",
